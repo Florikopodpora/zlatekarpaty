@@ -76,34 +76,31 @@
       left: 0;
       right: 0;
       height: 64px;
-      padding: 0 20px;
+      padding: 0 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       z-index: 100;
-      background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%);
+      background: linear-gradient(to bottom, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0) 100%);
     }
 
-    .logo-text {
-      font-family: var(--font-display);
-      font-size: 18px;
-      font-weight: 700;
-      color: #fff;
-      letter-spacing: -0.5px;
+    /* Logo Image Style */
+    .logo-container {
+      background: #ffffff;
+      padding: 6px 12px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      height: 38px;
     }
 
-    .logo-text span {
-      color: var(--color-gold);
-    }
-
-    .city-badge {
-      font-size: 9px;
-      background: var(--color-gold);
-      color: #000000;
-      padding: 2px 6px;
-      border-radius: 4px;
-      margin-left: 4px;
-      font-weight: 800;
+    .logo-img {
+      height: 100%;
+      width: auto;
+      object-fit: contain;
     }
 
     .call-btn {
@@ -179,15 +176,6 @@
       display: flex;
       flex-direction: column;
       gap: 12px;
-    }
-
-    /* Floating bottom action button for booking */
-    .feed-action-container {
-      position: absolute;
-      bottom: 20px;
-      left: 20px;
-      right: 20px;
-      z-index: 10;
     }
 
     /* Navigation Bar */
@@ -341,6 +329,32 @@
     .tab-view::-webkit-scrollbar {
       display: none;
     }
+
+    /* Admin/Employee badge status styles */
+    .status-pill {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 99px;
+    }
+
+    .status-waiting {
+      background: rgba(229, 195, 101, 0.15);
+      color: #e5c365;
+      border: 1px solid rgba(229, 195, 101, 0.3);
+    }
+
+    .status-won {
+      background: rgba(16, 185, 129, 0.15);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .status-lost {
+      background: rgba(239, 68, 68, 0.15);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
   </style>
 </head>
 <body>
@@ -350,9 +364,9 @@
 
     <!-- Top Overlay Header -->
     <header class="bitesight-header">
-      <div class="logo-text">
-        KARPATY<span>VÝZVY</span>
-        <span class="city-badge">ÚSTÍ</span>
+      <div class="logo-container">
+        <!-- New logo loaded from raw github link or local fallback -->
+        <img src="https://raw.githubusercontent.com/Florikopodpora/zlatekarpaty/main/assets/logo.png" class="logo-img" alt="Zlaté Karpaty Logo" onerror="this.src='assets/logo.png'" />
       </div>
 
       <a href="tel:732781138" class="call-btn">
@@ -426,29 +440,49 @@
         </div>
       </section>
 
-      <!-- VIEW 4: TIKTOK FEED & STATS -->
-      <section id="view-tiktok" class="tab-view hidden space-y-4">
-        <!-- Filled by JS -->
-      </section>
+      <!-- VIEW 4: ZAMĚSTNANCI (ADMIN PORTAL FOR EMPLOYEES) -->
+      <section id="view-admin" class="tab-view hidden space-y-4">
+        <div class="flex justify-between items-center">
+          <div>
+            <h2 class="text-xl font-bold text-white">Administrace</h2>
+            <p class="text-xs text-gray-400">Správa rezervací a stavů výzev</p>
+          </div>
+          <span class="px-2 py-0.5 rounded bg-red-500/20 text-red-400 text-[10px] font-bold border border-red-500/30">
+            Pobočka Ústí
+          </span>
+        </div>
 
-      <!-- VIEW 5: PLAKÁT -->
-      <section id="view-poster" class="tab-view hidden space-y-4">
-        <div class="space-y-3 text-center">
-          <h2 class="text-lg font-bold text-white">Oficiální Plakát Akce</h2>
-          <div class="rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
-            <img src="assets/poster.jpg" alt="Plakát Zlaté Karpaty" class="w-full h-auto" />
+        <!-- Stats row -->
+        <div class="grid grid-cols-3 gap-2 bg-white/5 p-3 rounded-xl border border-white/5 text-center text-xs">
+          <div>
+            <span class="text-[9px] text-gray-500 block uppercase">Celkem</span>
+            <strong id="admin-stat-total" class="text-white text-sm">0</strong>
           </div>
-          <div class="bg-white/5 p-3.5 rounded-xl text-left text-xs text-gray-300 space-y-1.5 border border-white/5">
-            <div class="font-bold text-yellow-400">Restaurace Zlaté Karpaty</div>
-            <div>Adresa: Hornická 2511, Ústí nad Labem</div>
-            <div>Telefon: <a href="tel:732781138" class="text-green-400 underline">732 781 138</a></div>
+          <div class="border-l border-white/10">
+            <span class="text-[9px] text-gray-500 block uppercase font-bold text-green-400">Vyhrálo</span>
+            <strong id="admin-stat-won" class="text-green-400 text-sm">0</strong>
           </div>
+          <div class="border-l border-white/10">
+            <span class="text-[9px] text-gray-500 block uppercase font-bold text-red-400">Prohrálo</span>
+            <strong id="admin-stat-lost" class="text-red-400 text-sm">0</strong>
+          </div>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="relative">
+          <input type="text" id="admin-search-input" oninput="filterAdminReservations()" placeholder="Vyhledat podle kódu nebo jména..." class="bitesight-input text-xs pl-8" />
+          <i class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-gray-500 text-xs"></i>
+        </div>
+
+        <!-- Admin Reservations List -->
+        <div id="admin-reservations-list" class="space-y-2.5">
+          <!-- Filled by JS -->
         </div>
       </section>
 
     </div>
 
-    <!-- Bitesight Bottom Fixed Navbar -->
+    <!-- Bitesight Bottom Fixed Navbar (Only 4 tabs: Challenges, Book, Tickets, Admin) -->
     <nav class="bitesight-navbar">
       <button class="nav-btn active" onclick="switchView('challenges')">
         <i class="fa-solid fa-play"></i>
@@ -462,13 +496,9 @@
         <i class="fa-solid fa-ticket"></i>
         <span>Rezervace</span>
       </button>
-      <button class="nav-btn" onclick="switchView('tiktok')">
-        <i class="fa-brands fa-tiktok"></i>
-        <span>TikTok</span>
-      </button>
-      <button class="nav-btn" onclick="switchView('poster')">
-        <i class="fa-solid fa-image"></i>
-        <span>Plakát</span>
+      <button class="nav-btn" onclick="switchView('admin')">
+        <i class="fa-solid fa-user-shield"></i>
+        <span>Zaměstnanci</span>
       </button>
     </nav>
 
@@ -499,7 +529,7 @@
   <!-- Floating Toast -->
   <div id="app-toast" class="toast-container"></div>
 
-  <!-- 100% INLINED PRE-OPTIMIZED DATA & SCRIPTS TO PREVENT FILE PROTOCOL ERRORS -->
+  <!-- 100% INLINED PRE-OPTIMIZED DATA & SCRIPTS (RAW GITHUB IMAGE FALLBACKS ENFORCED) -->
   <script>
     const APP_DATA = {
       restaurant: {
@@ -509,12 +539,13 @@
         phone: "732 781 138",
         tiktokUrl: "https://www.tiktok.com/@batrynstav2"
       },
+      // Raw GitHub CDN images to bypass missing assets/ local path loading problems
       challenges: [
         {
           id: "tower-5-pater",
           title: "5 Patrová Věž pro dva",
           subtitle: "Megavýzva pro 2 odvážné",
-          image: "assets/tower.png",
+          image: "https://raw.githubusercontent.com/Florikopodpora/zlatekarpaty/main/assets/tower.png",
           timeLimit: 30,
           peopleCount: 2,
           prize: 20000,
@@ -533,7 +564,7 @@
           id: "mega-burger",
           title: "Mega Burger Monster",
           subtitle: "Hovězí nákyp s hranolky",
-          image: "assets/burger.png",
+          image: "https://raw.githubusercontent.com/Florikopodpora/zlatekarpaty/main/assets/burger.png",
           timeLimit: 30,
           peopleCount: 1,
           prize: 10000,
@@ -551,7 +582,7 @@
           id: "ceburek-2ks",
           title: "2x Křupavý Čeburek",
           subtitle: "Smažené taštičky plněné masem",
-          image: "assets/ceburek.png",
+          image: "https://raw.githubusercontent.com/Florikopodpora/zlatekarpaty/main/assets/ceburek.png",
           timeLimit: 30,
           peopleCount: 1,
           prize: 10000,
@@ -569,7 +600,7 @@
           id: "pelmeni-60ks",
           title: "Pelmeně 60 ks",
           subtitle: "Smetanový podnos s pažitkou",
-          image: "assets/pelmeni.png",
+          image: "https://raw.githubusercontent.com/Florikopodpora/zlatekarpaty/main/assets/pelmeni.png",
           timeLimit: 30,
           peopleCount: 1,
           prize: 10000,
@@ -587,7 +618,7 @@
           id: "varenyky-50ks",
           title: "50 ks Varenyky Fest",
           subtitle: "Barevná variace s dipem",
-          image: "assets/varenyky.png",
+          image: "https://raw.githubusercontent.com/Florikopodpora/zlatekarpaty/main/assets/varenyky.png",
           timeLimit: 30,
           peopleCount: 1,
           prize: 10000,
@@ -605,7 +636,7 @@
           id: "golubci-60ks",
           title: "Golubci 60 ks",
           subtitle: "Zelné závitky s masem a rýží",
-          image: "assets/golubci.png",
+          image: "https://raw.githubusercontent.com/Florikopodpora/zlatekarpaty/main/assets/golubci.png",
           timeLimit: 30,
           peopleCount: 1,
           prize: 10000,
@@ -630,15 +661,10 @@
           customerName: "Martin Novák",
           phone: "+420 777 123 456",
           depositPaid: 1500,
-          status: "Potvrzeno",
+          status: "Čeká na pokus",
           paidVia: "Apple Pay",
-          qrCodeData: "BAT-89241"
+          qrCodeData: "KARPATY-REZ-89241"
         }
-      ],
-      leaderboard: [
-        { name: "Petr K.", challenge: "2x Čeburek", time: "18:42", result: "VÝHRA 10 000 Kč + iPhone 📱", date: "včera" },
-        { name: "Tomáš M. & David S.", challenge: "5 Patrová Věž", time: "26:15", result: "VÝHRA 20 000 Kč 🏆", date: "před 3 dny" },
-        { name: "Jakub V.", challenge: "Pelmeně 60ks", time: "24:50", result: "VÝHRA 10 000 Kč", date: "před týdnem" }
       ]
     };
 
@@ -646,7 +672,7 @@
     let selectedBookingTime = "14:30";
     let inMemoryReservations = null;
 
-    // LocalStorage wrap wrapper
+    // LocalStorage wrap
     function getReservations() {
       try {
         const stored = localStorage.getItem("batryn_res");
@@ -677,7 +703,7 @@
       renderFeed();
       renderBookingForm();
       renderMyBookings();
-      renderTikTokView();
+      renderAdminView();
       switchView("challenges");
     });
 
@@ -695,7 +721,7 @@
       });
 
       if (tabId === "my-bookings") renderMyBookings();
-      if (tabId === "tiktok") renderTikTokView();
+      if (tabId === "admin") renderAdminView();
     }
 
     // Feed / Challenges renderer
@@ -705,7 +731,8 @@
 
       container.innerHTML = APP_DATA.challenges.map(c => `
         <div class="feed-item">
-          <img src="${c.image}" class="feed-bg-img" alt="${c.title}" />
+          <!-- Fallback handler in case raw git CDN fails temporarily -->
+          <img src="${c.image}" class="feed-bg-img" alt="${c.title}" onerror="this.src='assets/${c.id.replace('tower-5-pater','tower').replace('mega-burger','burger').replace('ceburek-2ks','ceburek').replace('pelmeni-60ks','pelmeni').replace('varenyky-50ks','varenyky').replace('golubci-60ks','golubci')}.png'" />
           <div class="feed-overlay"></div>
           
           <div class="feed-content">
@@ -748,7 +775,7 @@
       body.innerHTML = `
         <div class="space-y-4">
           <div class="image-container-4-3">
-            <img src="${challenge.image}" alt="${challenge.title}" />
+            <img src="${challenge.image}" alt="${challenge.title}" onerror="this.src='assets/${challenge.id.replace('tower-5-pater','tower').replace('mega-burger','burger').replace('ceburek-2ks','ceburek').replace('pelmeni-60ks','pelmeni').replace('varenyky-50ks','varenyky').replace('golubci-60ks','golubci')}.png'" />
           </div>
           <div>
             <h3 class="text-lg font-bold text-white">${challenge.title}</h3>
@@ -789,14 +816,12 @@
 
       select.addEventListener("change", (e) => triggerChallengeChange(e.target.value));
 
-      // Setup tomorrow min date
       const dateInput = document.getElementById("booking-date");
       const tom = new Date();
       tom.setDate(tom.getDate() + 1);
       dateInput.min = tom.toISOString().split('T')[0];
       dateInput.value = tom.toISOString().split('T')[0];
 
-      // Time Chips
       const times = ["11:30", "13:00", "14:30", "16:00", "17:30", "19:00", "20:30"];
       const chipsContainer = document.getElementById("booking-time-chips");
       if (chipsContainer) {
@@ -818,7 +843,7 @@
       if (preview && challenge) {
         preview.innerHTML = `
           <div class="bitesight-card p-3 flex items-center gap-3 bg-white/5 border border-white/5">
-            <img src="${challenge.image}" class="w-12 h-12 object-cover rounded" />
+            <img src="${challenge.image}" class="w-12 h-12 object-cover rounded" onerror="this.src='assets/${challenge.id.replace('tower-5-pater','tower').replace('mega-burger','burger').replace('ceburek-2ks','ceburek').replace('pelmeni-60ks','pelmeni').replace('varenyky-50ks','varenyky').replace('golubci-60ks','golubci')}.png'" />
             <div>
               <h4 class="font-bold text-xs text-white">${challenge.title}</h4>
               <span class="text-[10px] text-green-400">Výhra: ${challenge.prize.toLocaleString()} Kč</span>
@@ -922,7 +947,7 @@
           customerName: activeCheckout.customerName,
           phone: activeCheckout.phone,
           depositPaid: activeCheckout.depositPaid,
-          status: "Potvrzeno",
+          status: "Čeká na pokus",
           paidVia: method,
           qrCodeData: `KARPATY-${randomId}`
         };
@@ -1023,42 +1048,103 @@
       }
     }
 
-    // Leaderboard & TikTok
-    function renderTikTokView() {
-      const container = document.getElementById("view-tiktok");
+    // Admin / Employee Dashboard View
+    function renderAdminView() {
+      const list = getReservations();
+      
+      // Update Stats
+      const total = list.length;
+      const won = list.filter(r => r.status === "Splněno ✅").length;
+      const lost = list.filter(r => r.status === "Nezvládnuto ❌").length;
+
+      document.getElementById("admin-stat-total").innerText = total;
+      document.getElementById("admin-stat-won").innerText = won;
+      document.getElementById("admin-stat-lost").innerText = lost;
+
+      filterAdminReservations();
+    }
+
+    function filterAdminReservations() {
+      const container = document.getElementById("admin-reservations-list");
       if (!container) return;
 
-      container.innerHTML = `
-        <div class="bitesight-card text-center p-5 space-y-3">
-          <div class="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center text-xl mx-auto"><i class="fa-brands fa-tiktok"></i></div>
-          <div>
-            <h3 class="font-bold text-sm">@batrynstav2</h3>
-            <p class="text-[11px] text-gray-400">Restaurace Zlaté Karpaty gastro výzvy</p>
-          </div>
-          <a href="${APP_DATA.restaurant.tiktokUrl}" target="_blank" class="bitesight-btn-primary py-2 px-6 text-xs inline-flex">
-            Sledovat na TikToku
-          </a>
-        </div>
+      const list = getReservations();
+      const query = document.getElementById("admin-search-input").value.toLowerCase().trim();
 
-        <div class="space-y-3">
-          <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Tabulka nejlepších výkonů</h4>
-          
-          <div class="space-y-2">
-            ${APP_DATA.leaderboard.map((item, idx) => `
-              <div class="bitesight-card p-3 flex justify-between items-center text-xs">
-                <div class="flex items-center gap-2">
-                  <span class="text-gray-500 font-bold">#${idx + 1}</span>
-                  <div>
-                    <h5 class="font-bold text-white">${item.name}</h5>
-                    <p class="text-[10px] text-gray-500">${item.challenge} • ${item.time}</p>
-                  </div>
-                </div>
-                <span class="text-[11px] font-bold text-green-400">${item.result}</span>
-              </div>
-            `).join('')}
+      const filtered = list.filter(res => 
+        res.id.toLowerCase().includes(query) || 
+        res.customerName.toLowerCase().includes(query) ||
+        res.challengeTitle.toLowerCase().includes(query)
+      );
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div class="bitesight-card text-center p-6 text-xs text-gray-400">Nenalezeny žádné rezervace.</div>`;
+        return;
+      }
+
+      container.innerHTML = filtered.map(res => {
+        let statusClass = "status-waiting";
+        if (res.status === "Splněno ✅") statusClass = "status-won";
+        if (res.status === "Nezvládnuto ❌") statusClass = "status-lost";
+
+        return `
+          <div class="bitesight-card p-3.5 space-y-2">
+            <div class="flex justify-between items-center text-xs border-b border-white/5 pb-2">
+              <span class="status-pill ${statusClass}">${res.status || 'Čeká na pokus'}</span>
+              <strong class="text-white">${res.id}</strong>
+            </div>
+
+            <div class="text-xs text-gray-300 space-y-1">
+              <div>Soutěž: <strong class="text-white">${res.challengeTitle}</strong></div>
+              <div>Termín: <span>${formatCzechDate(res.date)} o ${res.time} hod</span></div>
+              <div>Zákazník: <span class="text-white">${res.customerName}</span> (<a href="tel:${res.phone}" class="text-green-400 underline">${res.phone}</a>)</div>
+              <div>Záloha: <span>${res.depositPaid} Kč (${res.paidVia})</span></div>
+            </div>
+
+            <!-- Employee Quick Action Buttons -->
+            <div class="flex gap-2 pt-2 border-t border-white/5">
+              <button onclick="updateReservationStatus('${res.id}', 'Splněno ✅')" class="flex-1 py-1.5 bg-green-500/10 hover:bg-green-500/25 border border-green-500/30 text-green-400 rounded text-[10px] font-bold">
+                ✓ Splněno
+              </button>
+              <button onclick="updateReservationStatus('${res.id}', 'Nezvládnuto ❌')" class="flex-1 py-1.5 bg-red-500/10 hover:bg-red-500/25 border border-red-500/30 text-red-400 rounded text-[10px] font-bold">
+                ✗ Nezvládnuto
+              </button>
+              <button onclick="deleteReservationByAdmin('${res.id}')" class="px-2 py-1.5 bg-white/5 hover:bg-white/10 text-gray-400 rounded text-[10px]">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </div>
           </div>
-        </div>
-      `;
+        `;
+      }).join('');
+    }
+
+    function updateReservationStatus(id, newStatus) {
+      let list = getReservations();
+      const res = list.find(r => r.id === id);
+      if (res) {
+        res.status = newStatus;
+        try {
+          localStorage.setItem("batryn_res", JSON.stringify(list));
+        } catch(e) {
+          inMemoryReservations = list;
+        }
+        renderAdminView();
+        showToast(`Stav změněn na ${newStatus}`);
+      }
+    }
+
+    function deleteReservationByAdmin(id) {
+      if (confirm(`Opravdu si přejete smazat rezervaci ${id}?`)) {
+        let list = getReservations();
+        list = list.filter(r => r.id !== id);
+        try {
+          localStorage.setItem("batryn_res", JSON.stringify(list));
+        } catch(e) {
+          inMemoryReservations = list;
+        }
+        renderAdminView();
+        showToast(`Rezervace ${id} smazána.`);
+      }
     }
 
     // Modal Helpers
@@ -1070,7 +1156,7 @@
       document.getElementById(id).classList.remove("open");
     }
 
-    // Toast Alert helper
+    // Toast Alert
     function showToast(msg) {
       const toast = document.getElementById("app-toast");
       if (!toast) return;
@@ -1081,6 +1167,13 @@
         toast.style.opacity = "0";
         toast.style.transform = "translateX(-50%) translateY(0)";
       }, 2500);
+    }
+
+    function formatCzechDate(dateStr) {
+      if (!dateStr) return "";
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return dateStr;
+      return d.toLocaleDateString("cs-CZ", { weekday: 'short', day: 'numeric', month: 'long' });
     }
   </script>
 

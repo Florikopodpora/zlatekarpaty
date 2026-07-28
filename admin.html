@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Restaurace Zlaté Karpaty — Administrace</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- FontAwesome Icons CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap');
+
+    :root {
+      --font-main: 'Plus Jakarta Sans', sans-serif;
+      --font-display: 'Space Grotesk', sans-serif;
+      --color-primary: #fe2c55;
+      --color-gold: #e5c365;
+      --color-bg-app: #000000;
+      --border-color: rgba(255, 255, 255, 0.08);
+      --radius-lg: 24px;
+      --radius-md: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: var(--font-main);
+    }
+
+    body {
+      background-color: #0c0c0e;
+      color: #ffffff;
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .bitesight-app-frame {
+      position: relative;
+      width: 100%;
+      max-width: 420px;
+      height: 100vh;
+      background-color: var(--color-bg-app);
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.9), 0 0 0 10px rgba(255, 255, 255, 0.03);
+      border-radius: 36px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    @media (max-width: 480px) {
+      .bitesight-app-frame {
+        max-width: 100%;
+        height: 100vh;
+        border-radius: 0;
+        border: none;
+        box-shadow: none;
+      }
+    }
+
+    .bitesight-header {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 64px;
+      padding: 0 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0) 100%);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      height: 44px;
+    }
+
+    .logo-img {
+      height: 100%;
+      width: auto;
+      object-fit: contain;
+    }
+
+    .bitesight-viewport {
+      flex: 1;
+      width: 100%;
+      position: relative;
+      overflow-y: auto;
+      margin-top: 64px;
+      padding: 20px 16px;
+    }
+
+    .bitesight-viewport::-webkit-scrollbar {
+      display: none;
+    }
+
+    .bitesight-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+
+    .bitesight-input {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-md);
+      padding: 12px 12px 12px 34px;
+      color: #fff;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .status-pill {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 99px;
+    }
+
+    .status-waiting {
+      background: rgba(229, 195, 101, 0.15);
+      color: #e5c365;
+      border: 1px solid rgba(229, 195, 101, 0.3);
+    }
+
+    .status-won {
+      background: rgba(16, 185, 129, 0.15);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .status-lost {
+      background: rgba(239, 68, 68, 0.15);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .toast-container {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #ffffff;
+      color: #000000;
+      font-weight: 700;
+      font-size: 12px;
+      padding: 10px 20px;
+      border-radius: 99px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      z-index: 2000;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- App Wrapper Frame -->
+  <div class="bitesight-app-frame">
+
+    <!-- Top Header -->
+    <header class="bitesight-header">
+      <div class="logo-container">
+        <img src="https://raw.githubusercontent.com/Florikopodpora/zlatekarpaty/main/assets/logo.png" class="logo-img" alt="Zlaté Karpaty Logo" onerror="this.src='assets/logo.png'" />
+      </div>
+      <span class="px-2 py-0.5 rounded bg-red-500/20 text-red-400 text-[10px] font-bold border border-red-500/30 uppercase">
+        Obsluha
+      </span>
+    </header>
+
+    <!-- Content Viewport -->
+    <div class="bitesight-viewport space-y-4">
+      <div>
+        <h2 class="text-xl font-bold text-white">Správa Rezervací</h2>
+        <p class="text-xs text-gray-400">Přehled a vyhodnocení gastronomických výzev</p>
+      </div>
+
+      <!-- Stats row -->
+      <div class="grid grid-cols-3 gap-2 bg-white/5 p-3 rounded-xl border border-white/5 text-center text-xs">
+        <div>
+          <span class="text-[9px] text-gray-500 block uppercase">Celkem</span>
+          <strong id="admin-stat-total" class="text-white text-sm">0</strong>
+        </div>
+        <div class="border-l border-white/10">
+          <span class="text-[9px] text-gray-500 block uppercase font-bold text-green-400">Vyhrálo</span>
+          <strong id="admin-stat-won" class="text-green-400 text-sm">0</strong>
+        </div>
+        <div class="border-l border-white/10">
+          <span class="text-[9px] text-gray-500 block uppercase font-bold text-red-400">Prohrálo</span>
+          <strong id="admin-stat-lost" class="text-red-400 text-sm">0</strong>
+        </div>
+      </div>
+
+      <!-- Search Bar -->
+      <div class="relative">
+        <input type="text" id="admin-search-input" oninput="filterAdminReservations()" placeholder="Vyhledat kód nebo jméno..." class="bitesight-input text-xs" />
+        <i class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-gray-500 text-xs"></i>
+      </div>
+
+      <!-- Admin Reservations List -->
+      <div id="admin-reservations-list" class="space-y-3 pb-8">
+        <!-- Filled by JS -->
+      </div>
+    </div>
+
+  </div>
+
+  <div id="app-toast" class="toast-container"></div>
+
+  <script>
+    const APP_DATA = {
+      sampleReservations: [
+        {
+          id: "REZ-89241",
+          challengeId: "mega-burger",
+          challengeTitle: "Mega Burger Monster",
+          date: "2026-08-22",
+          time: "17:30",
+          customerName: "Martin Novák",
+          phone: "+420 777 123 456",
+          depositPaid: 1500,
+          status: "Čeká na pokus",
+          paidVia: "Apple Pay",
+          qrCodeData: "KARPATY-REZ-89241"
+        }
+      ]
+    };
+
+    let inMemoryReservations = null;
+
+    function getReservations() {
+      try {
+        const stored = localStorage.getItem("batryn_res");
+        if (!stored) {
+          localStorage.setItem("batryn_res", JSON.stringify(APP_DATA.sampleReservations));
+          return APP_DATA.sampleReservations;
+        }
+        return JSON.parse(stored);
+      } catch (e) {
+        if (!inMemoryReservations) inMemoryReservations = [...APP_DATA.sampleReservations];
+        return inMemoryReservations;
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      renderAdminView();
+    });
+
+    function renderAdminView() {
+      const list = getReservations();
+      
+      // Update Stats
+      const total = list.length;
+      const won = list.filter(r => r.status === "Splněno ✅").length;
+      const lost = list.filter(r => r.status === "Nezvládnuto ❌").length;
+
+      document.getElementById("admin-stat-total").innerText = total;
+      document.getElementById("admin-stat-won").innerText = won;
+      document.getElementById("admin-stat-lost").innerText = lost;
+
+      filterAdminReservations();
+    }
+
+    function filterAdminReservations() {
+      const container = document.getElementById("admin-reservations-list");
+      if (!container) return;
+
+      const list = getReservations();
+      const query = document.getElementById("admin-search-input").value.toLowerCase().trim();
+
+      const filtered = list.filter(res => 
+        res.id.toLowerCase().includes(query) || 
+        res.customerName.toLowerCase().includes(query) ||
+        res.challengeTitle.toLowerCase().includes(query)
+      );
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div class="bitesight-card text-center p-6 text-xs text-gray-400">Nenalezeny žádné rezervace.</div>`;
+        return;
+      }
+
+      container.innerHTML = filtered.map(res => {
+        let statusClass = "status-waiting";
+        if (res.status === "Splněno ✅") statusClass = "status-won";
+        if (res.status === "Nezvládnuto ❌") statusClass = "status-lost";
+
+        return `
+          <div class="bitesight-card p-3.5 space-y-2">
+            <div class="flex justify-between items-center text-xs border-b border-white/5 pb-2">
+              <span class="status-pill ${statusClass}">${res.status || 'Čeká na pokus'}</span>
+              <strong class="text-white">${res.id}</strong>
+            </div>
+
+            <div class="text-xs text-gray-300 space-y-1">
+              <div>Soutěž: <strong class="text-white">${res.challengeTitle}</strong></div>
+              <div>Termín: <span>${formatCzechDate(res.date)} o ${res.time} hod</span></div>
+              <div>Zákazník: <span class="text-white">${res.customerName}</span> (<a href="tel:${res.phone}" class="text-green-400 underline">${res.phone}</a>)</div>
+              <div>Záloha: <span>${res.depositPaid} Kč (${res.paidVia})</span></div>
+            </div>
+
+            <div class="flex gap-2 pt-2 border-t border-white/5">
+              <button onclick="updateReservationStatus('${res.id}', 'Splněno ✅')" class="flex-1 py-1.5 bg-green-500/10 hover:bg-green-500/25 border border-green-500/30 text-green-400 rounded text-[10px] font-bold">
+                ✓ Splněno
+              </button>
+              <button onclick="updateReservationStatus('${res.id}', 'Nezvládnuto ❌')" class="flex-1 py-1.5 bg-red-500/10 hover:bg-red-500/25 border border-red-500/30 text-red-400 rounded text-[10px] font-bold">
+                ✗ Nezvládnuto
+              </button>
+              <button onclick="deleteReservation('${res.id}')" class="px-2 py-1.5 bg-white/5 hover:bg-white/10 text-gray-400 rounded text-[10px]">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function updateReservationStatus(id, newStatus) {
+      let list = getReservations();
+      const res = list.find(r => r.id === id);
+      if (res) {
+        res.status = newStatus;
+        try {
+          localStorage.setItem("batryn_res", JSON.stringify(list));
+        } catch(e) {
+          inMemoryReservations = list;
+        }
+        renderAdminView();
+        showToast(`Stav změněn na ${newStatus}`);
+      }
+    }
+
+    function deleteReservation(id) {
+      if (confirm(`Opravdu si přejete smazat rezervaci ${id}?`)) {
+        let list = getReservations();
+        list = list.filter(r => r.id !== id);
+        try {
+          localStorage.setItem("batryn_res", JSON.stringify(list));
+        } catch(e) {
+          inMemoryReservations = list;
+        }
+        renderAdminView();
+        showToast(`Rezervace ${id} smazána.`);
+      }
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById("app-toast");
+      if (!toast) return;
+      toast.innerText = msg;
+      toast.style.opacity = "1";
+      toast.style.transform = "translateX(-50%) translateY(10px)";
+      setTimeout(() => {
+        toast.style.opacity = "0";
+        toast.style.transform = "translateX(-50%) translateY(0)";
+      }, 2500);
+    }
+
+    function formatCzechDate(dateStr) {
+      if (!dateStr) return "";
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return dateStr;
+      return d.toLocaleDateString("cs-CZ", { weekday: 'short', day: 'numeric', month: 'long' });
+    }
+  </script>
+
+</body>
+</html>

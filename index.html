@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Restaurace Zlaté Karpaty — Gastro Výzvy</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- FontAwesome Icons CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Custom Bitesight Theme System -->
+  <link rel="stylesheet" href="css/glassmorphism.css">
+</head>
+<body>
+
+  <!-- Bitesight-inspired App Frame wrapper -->
+  <div class="bitesight-app-frame">
+
+    <!-- Header Overlay -->
+    <header class="bitesight-header">
+      <div class="bitesight-logo-text">
+        KARPATY<span>VÝZVY</span>
+        <span class="region-badge">ÚSTÍ</span>
+      </div>
+
+      <a href="tel:732781138" class="location-selector">
+        <i class="fa-solid fa-phone text-green-400"></i>
+        <span>Zavolat</span>
+      </a>
+    </header>
+
+    <!-- App Viewport for views content -->
+    <div class="bitesight-viewport">
+
+      <!-- iPhone Promo Banner Card inside viewport -->
+      <div class="bitesight-card border-yellow-500/25 p-3.5 bg-yellow-500/5 mb-4">
+        <div class="flex items-center justify-between gap-2">
+          <div class="space-y-1">
+            <span class="inline-block px-1.5 py-0.5 rounded bg-red-600 text-white text-[9px] font-bold uppercase tracking-wider">
+              Bonus: 20.8. – 20.9.
+            </span>
+            <h3 class="text-sm font-bold text-white">iPhone 15 Pro Max 256 GB 📱</h3>
+            <p class="text-[10px] text-gray-400">Při dokončení libovolné výzvy s rezervou > 3 minuty!</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB VIEW 1: VÝZVY -->
+      <main id="view-challenges" class="tab-view space-y-4">
+        <div id="challenges-grid" class="space-y-4">
+          <!-- Rendered dynamically by app.js -->
+        </div>
+      </main>
+
+      <!-- TAB VIEW 2: REZERVOVAT -->
+      <section id="view-booking" class="tab-view hidden space-y-3">
+        <div class="space-y-1">
+          <h2 class="text-base font-bold text-white">Rezervovat Výzvu</h2>
+          <p class="text-[11px] text-gray-400">Vyplňte údaje pro stůl v Ústí nad Labem</p>
+        </div>
+
+        <form id="booking-form" onsubmit="proceedToPayment(event)" class="space-y-3">
+          
+          <div>
+            <label class="block text-[10px] font-bold text-gray-400 mb-1 uppercase">1. Zvolte výzvu:</label>
+            <select id="booking-challenge-select" class="bitesight-select text-xs">
+              <!-- Rendered by booking.js -->
+            </select>
+          </div>
+
+          <div id="booking-challenge-summary"></div>
+
+          <div>
+            <label class="block text-[10px] font-bold text-gray-400 mb-1 uppercase">2. Vyberte datum:</label>
+            <input type="date" id="booking-date" class="bitesight-input text-xs" required />
+          </div>
+
+          <div>
+            <label class="block text-[10px] font-bold text-gray-400 mb-1 uppercase">3. Vyberte čas slotu:</label>
+            <div id="time-slots-container" class="grid grid-cols-4 gap-1.5"></div>
+          </div>
+
+          <div class="space-y-2 pt-2 border-t border-white/5">
+            <label class="block text-[10px] font-bold text-gray-400 uppercase">4. Kontaktní údaje:</label>
+            <input type="text" id="booking-name" placeholder="Jméno a Příjmení" class="bitesight-input text-xs" required />
+            <input type="tel" id="booking-phone" placeholder="Telefonní číslo" class="bitesight-input text-xs" required />
+          </div>
+
+          <div class="pt-3 border-t border-white/5 flex items-center justify-between">
+            <div>
+              <span class="text-[10px] text-gray-400 block">Záloha online:</span>
+              <strong id="booking-total-price" class="text-base font-bold text-yellow-400">1 500 Kč</strong>
+            </div>
+
+            <button type="submit" class="bitesight-btn-primary py-2.5 px-4 text-xs">
+              Zaplatit zálohu
+            </button>
+          </div>
+
+        </form>
+      </section>
+
+      <!-- TAB VIEW 3: MOJE REZERVACE -->
+      <section id="view-my-bookings" class="tab-view hidden space-y-3">
+        <div class="space-y-1 mb-2">
+          <h2 class="text-base font-bold text-white">Moje Rezervace</h2>
+          <p class="text-[11px] text-gray-400">Přehled a lístky s QR kódem</p>
+        </div>
+        <div id="my-bookings-list"></div>
+      </section>
+
+      <!-- TAB VIEW 4: TIKTOK -->
+      <section id="view-tiktok" class="tab-view hidden space-y-4">
+        <div id="tiktok-content-container"></div>
+      </section>
+
+      <!-- TAB VIEW 5: PLAKÁT -->
+      <section id="view-poster" class="tab-view hidden space-y-4">
+        <div id="poster-view-container"></div>
+      </section>
+
+    </div>
+
+    <!-- Bitesight Bottom Navbar -->
+    <nav class="bitesight-navbar">
+      <button class="nav-item active" data-tab="challenges">
+        <i class="fa-solid fa-trophy"></i>
+        <span>Výzvy</span>
+      </button>
+      <button class="nav-item" data-tab="booking">
+        <i class="fa-solid fa-calendar-plus"></i>
+        <span>Rezervovat</span>
+      </button>
+      <button class="nav-item" data-tab="my-bookings">
+        <i class="fa-solid fa-ticket"></i>
+        <span>Rezervace</span>
+      </button>
+      <button class="nav-item" data-tab="tiktok">
+        <i class="fa-brands fa-tiktok"></i>
+        <span>TikTok</span>
+      </button>
+      <button class="nav-item" data-tab="poster">
+        <i class="fa-solid fa-image"></i>
+        <span>Plakát</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <!-- Modals -->
+  <div id="detail-modal" class="modal-overlay">
+    <div class="modal-content p-4">
+      <div id="detail-modal-body"></div>
+    </div>
+  </div>
+
+  <div id="payment-modal" class="modal-overlay">
+    <div class="modal-content">
+      <div id="payment-modal-body"></div>
+    </div>
+  </div>
+
+  <div id="ticket-modal" class="modal-overlay">
+    <div class="modal-content">
+      <div id="ticket-modal-body"></div>
+    </div>
+  </div>
+
+  <div id="app-toast" class="toast-message"></div>
+
+  <!-- JS Modules -->
+  <script src="js/data.js"></script>
+  <script src="js/myBookings.js"></script>
+  <script src="js/booking.js"></script>
+  <script src="js/payment.js"></script>
+  <script src="js/tiktok.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,22 @@
+{
+  "project": "Restaurace Zlaté Karpaty - Gastro Výzvy",
+  "status": "Ready for client preview",
+  "theme": "Bitesight-inspired Mobile Viewport Frame",
+  "last_updated": "2026-07-28",
+  "components": {
+    "index.html": "Main entry point with Bitesight-styled mobile frame wrapper, header location triggers, and bottom navigation tabs.",
+    "css/glassmorphism.css": "Bitesight theme system, obsidian base layout, custom input controls, and modal overlays.",
+    "js/data.js": "Official rules, challenge parameters (1 500 Kč and 3 000 Kč fees, 10 000 Kč and 20 000 Kč prizes), iPhone bonus date ranges.",
+    "js/app.js": "Tab navigation controller, detail modal rendering, toast message triggers.",
+    "js/booking.js": "Date selection validator, available hour slot picker, and data inputs.",
+    "js/payment.js": "Simulated Apple Pay, Google Pay, and Credit card checkout delays.",
+    "js/myBookings.js": "Safe LocalStorage wrapped cards list, cancellation, and QR lístek generator.",
+    "js/tiktok.js": "Social feed link triggers, winner tables, and mock clip grids."
+  },
+  "agent_skills": {
+    "imported_path": ".agents/skills/",
+    "active_skills_count": 24,
+    "frameworks_supported": ["Antigravity", "Gemini", "Kiro", "Cursor"],
+    "description": "Production-grade engineering skills cloned from addyosmani/agent-skills for structured AI execution."
+  }
+}
